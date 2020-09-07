@@ -454,7 +454,16 @@ _LABEL_A8_38:
 		ld b, $20
 		call _LABEL_28B6_10
 		call _LABEL_2902_12
-		
+		ld hl, $2000
+		ld de, _RAM_D000_
+		ld bc, $0C00
+		call _LABEL_2864_20
+		call _LABEL_28F0_23
+		ld hl, $0000
+		ld de, _RAM_D000_
+		ld bc, $0C00
+		call _LABEL_2864_20
+		call _LABEL_28F6_25
 _LABEL_123_:	
 		ld hl, _DATA_17E_
 		ld hl, _DATA_1B0_
@@ -1836,7 +1845,20 @@ _LABEL_2840_:
 _LABEL_285B_21:	
 	
 _LABEL_2864_20:	
+	call _LABEL_285B_21
+	push de
+	push bc
 _LABEL_2869_22:	
+	ld a, (de)
+	out (Port_VDPData), a
+	inc de
+	dec bc
+	ld a, c
+	or b
+	jr nz, 	_LABEL_2869_22
+	pop bc
+	pop de
+	ret
 	
 _LABEL_2875_30:	
 _LABEL_287A_31:	
@@ -1893,12 +1915,13 @@ _LABEL_2912_:
 _LABEL_291A_106:	
 		ld ix, _DATA_430A_
 _LABEL_291E_24:	
+		ld e, $02
 _LABEL_2920_13:	
 		ld hl, _RAM_D000_
 		ld d, $00
 		ld c, e
 _LABEL_2926_19:	
-	push hl
+		push hl
 _LABEL_2927_17:	
 		ld a, (ix+0)
 		or a
