@@ -519,6 +519,22 @@ _LABEL_123_:
 		call _LABEL_A6C_
 		call _LABEL_9BE_
 ++:	
+		ld hl, _RAM_C10E_
+		inc (hl)
+		ld a, (hl)
+		inc hl
+		sub (hl)
+		jr nz, _LABEL_123_
+		dec hl
+		ld (hl), a
+		ld a, (_RAM_C181_)
+		cpl
+		and $01
+		ld (_RAM_C181_), a
+		call _LABEL_A0E_
+		ld hl, _RAM_C181_
+		set 7, (hl)
+		ret
 	
 ; Pointer Table from 17E to 183 (3 entries, indexed by _RAM_C10E_)	
 _DATA_17E_:	
@@ -547,7 +563,6 @@ _LABEL_1E2_103:
 		and $0F
 		cp $05
 		ret z
-
 	
 _LABEL_205_116:	
 _LABEL_207_118:	
@@ -559,7 +574,21 @@ _LABEL_234_117:
 _LABEL_242_120:	
 	
 _LABEL_24F_175:	
+		call _LABEL_27A8_176
+		ld hl, _LABEL_24F_175	; Overriding return address
+		push hl
+		ld a, (_RAM_C003_)
+		and $0F
+		add a, a
+		ld e, a
+		ld d, $00
 		ld hl, _DATA_268_
+		add hl, de
+		ld a, (hl)
+		inc hl
+		ld h, (hl)
+		ld l, a
+		jp (hl)
 	
 ; Jump Table from 268 to 273 (6 entries, indexed by _RAM_C003_)	
 _DATA_268_:	
@@ -567,6 +596,7 @@ _DATA_268_:
 	
 ; 1st entry of Jump Table from 268 (indexed by _RAM_C003_)	
 _LABEL_274_:	
+		jr +
 	
 	; Data from 276 to 2AE (57 bytes)
 	.db $21 $03 $C0 $CB $76 $20 $28 $CB $F6 $23 $01 $F0 $00 $71 $23 $70
@@ -575,6 +605,11 @@ _LABEL_274_:
 	.db $04 $C0 $2B $22 $04 $C0 $7D $B4 $C0
 	
 +:	
+		xor a
+		ld (_RAM_C009_), a
+		ld a, $01
+		ld (_RAM_C003_), a
+		ret
 	
 ; 2nd entry of Jump Table from 268 (indexed by _RAM_C003_)	
 _LABEL_2B9_:	
