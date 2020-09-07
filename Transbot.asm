@@ -390,7 +390,7 @@ _DATA_20_:
 	.dsb 21, $FF
 	
 _IRQ_HANDLER:	
-	jp _LABEL_FA6_35
+		jp _LABEL_FA6_35
 
 ; Data from 3B to 65 (43 bytes)	
 _DATA_3B_:	
@@ -399,17 +399,61 @@ _DATA_3B_:
 	.dsb 23, $FF
 	
 _NMI_HANDLER:	
+		push af 
+		ld a, (_RAM_C000_)
+		and $0C
+		cp $04
+		jr nz, _LABEL_82_180
+		ld a, (_RAM_C00C_)
+		cp $0F
+		jr c, _LABEL_82_180
+		xor a
+		ld (_RAM_C00C_), a
+		ld a, (_RAM_C00B_)
+		cpl
+		ld (_RAM_C00B_), a
 _LABEL_82_180:	
+		pop af
+		retn
 	
 ; Data from 85 to 89 (5 bytes)	
 _DATA_85_:	
 	.db $02 $00 $00 $80 $7A
 	
 _LABEL_8A_2:	
+		di
+		ld sp, $E000
+		im 1
+		ld hl, _RAM_C000_
+		ld de, _RAM_C000_ + 1
+		ld bc, $00FF
+		ld (hl), $00
+		ldir
+		call _LABEL_280B_3
+		call _LABEL_3465_6
+		ld b, $0A
+		call _LABEL_27EB_7
 _LABEL_A8_38:	
+		di
+		ld sp, $E000
+		call _LABEL_3465_6
+		ld hl, $0000
+		ld (_RAM_C00B_), hl
+		ld hl, _RAM_C100_
+		ld de, _RAM_C100_ + 1
+		ld bc, $1EFF
+		ld (hl), $00
+		ldir
+		in a, (Port_VDPStatus)
+		ld b, $14
+		ld c, Port_VDPAddress
 		ld hl, _DATA_3B_
+		otir
+		ld hl, $0000
 		ld de, _DATA_3_
-	
+		ld b, $20
+		call _LABEL_28B6_10
+		
 _LABEL_123_:	
 		ld hl, _DATA_17E_
 		ld hl, _DATA_1B0_
@@ -734,108 +778,108 @@ _LABEL_F99_:
 +:	
 	
 _LABEL_FA6_35:	
-	push af
-	in a, (Port_VDPStatus)
-	bit 7, a
-	jr nz, _LABEL_FC8_36
-	ld a, (_RAM_C152_)
-	bit 5, a
-	jr nz, _LABEL_FC5_37
-	ld a, (_RAM_C145_)
-	out (Port_VDPAddress), a
-	ld a, 88
-	out (Port_VDPAddress), a
-	ld a, $FF
-	out (Port_VDPAddress), a
-	ld a, $8A
-	out (Port_VDPAddress), a
+		push af
+		in a, (Port_VDPStatus)
+		bit 7, a
+		jr nz, _LABEL_FC8_36
+		ld a, (_RAM_C152_)
+		bit 5, a
+		jr nz, _LABEL_FC5_37
+		ld a, (_RAM_C145_)
+		out (Port_VDPAddress), a
+		ld a, 88
+		out (Port_VDPAddress), a
+		ld a, $FF
+		out (Port_VDPAddress), a
+		ld a, $8A
+		out (Port_VDPAddress), a
 _LABEL_FC5_37:
-	pop af
-	ei
-	ret
+		pop af
+		ei
+		ret
 	
 _LABEL_FC8_36:
-	ld a, (_RAM_C14F_)
-	out (Port_VDPAddress), a
-	ld a, $88
-	out (Port_VDPAddress), a
-	ld a, $7F
-	out (Port_VDPAddress), a
-	ld a, $8A
-	out (Port_VDPAddress), a
-	push ix
-	push iy
-	push af
-	push bc
-	push de
-	push hl
-	ex af, af'
-	exx
-	push af
-	push bc
-	push de
-	push hl
-	in a, (Port_IOPort2)
-	and $10
-	ld hl, _RAM_C022_
-	ld c, (hl)
-	ld (hl), a
-	xor c
-	and c
-	jp nz, _LABEL_A8_38
-	ld a, (_RAM_C00C_)
-	inc c
-	cp $0F
-	jr c, _LABEL_FFF_39
-	ld a, $0F
+		ld a, (_RAM_C14F_)
+		out (Port_VDPAddress), a
+		ld a, $88
+		out (Port_VDPAddress), a
+		ld a, $7F
+		out (Port_VDPAddress), a
+		ld a, $8A
+		out (Port_VDPAddress), a
+		push ix
+		push iy
+		push af
+		push bc
+		push de
+		push hl
+		ex af, af'
+		exx
+		push af
+		push bc
+		push de
+		push hl
+		in a, (Port_IOPort2)
+		and $10
+		ld hl, _RAM_C022_
+		ld c, (hl)
+		ld (hl), a
+		xor c
+		and c
+		jp nz, _LABEL_A8_38
+		ld a, (_RAM_C00C_)
+		inc c
+		cp $0F
+		jr c, _LABEL_FFF_39
+		ld a, $0F
 _LABEL_FFF_39:	
-	ld (_RAM_C00C_), a
-	ld a, (_RAM_C00B_)
-	or a
-	jp nz, _LABEL_1051_40
-	ld a, (_RAM_C001_)
-	rlca
-	jr nc, _LABEL_1033_42
-	ld hl, $3F00
-	ld de, _RAM_C240_
-	ld bc, $0040
-	call _LABEL_2864_20
-	ld hl, $3F00
-	ld de, _RAM_C280_
-	ld bc, $0080
-	call _LABEL_2864_20
-	ld hl, _RAM_C181_
-	res 7, (hl)
+		ld (_RAM_C00C_), a
+		ld a, (_RAM_C00B_)
+		or a
+		jp nz, _LABEL_1051_40
+		ld a, (_RAM_C001_)
+		rlca
+		jr nc, _LABEL_1033_42
+		ld hl, $3F00
+		ld de, _RAM_C240_
+		ld bc, $0040
+		call _LABEL_2864_20
+		ld hl, $3F00
+		ld de, _RAM_C280_
+		ld bc, $0080
+		call _LABEL_2864_20
+		ld hl, _RAM_C181_
+		res 7, (hl)
 _LABEL_1033_42:	
-	call _LABEL_1067_43
-	call _LABEL_29FA_58
-	call _LABEL_2433_74
-	call _LABEL_AEC_96
-	call _LABEL_1E2_103
-	call _LABEL_266F_121
-	call _LABEL_2DFD_123
-	call _LABEL_2E3E_124
-	call _LABEL_934_129
+		call _LABEL_1067_43
+		call _LABEL_29FA_58
+		call _LABEL_2433_74
+		call _LABEL_AEC_96
+		call _LABEL_1E2_103
+		call _LABEL_266F_121
+		call _LABEL_2DFD_123
+		call _LABEL_2E3E_124
+		call _LABEL_934_129
 _LABEL_104E_41:	
-	call _LABEL_303A_134
+		call _LABEL_303A_134
 _LABEL_1051_40:	
-	ld hl, _RAM_C001_
-	ld (hl), $01
-	pop hl
-	pop de
-	pop bc
-	pop af
-	exx
-	ex af, af'
-	pop hl
-	pop de
-	pop bc
-	pop af
-	pop iy
-	pop ix
-	pop af
-	ei
-	ret
+		ld hl, _RAM_C001_
+		ld (hl), $01
+		pop hl
+		pop de
+		pop bc
+		pop af
+		exx
+		ex af, af'
+		pop hl
+		pop de
+		pop bc
+		pop af
+		pop iy
+		pop ix
+		pop af
+		ei
+		ret
 _LABEL_1067_43:	
 _LABEL_108A_56:	
 _LABEL_1090_55:	
@@ -1753,9 +1797,15 @@ _LABEL_27D3_27:
 		ld de, _DATA_27D0_
 		ld de, _DATA_27D0_ + 2
 	
-_LABEL_27EB_7:	
+_LABEL_27EB_7:
+	ld de, $FFFF	
 _LABEL_27EE_9:	
+	ld hl, $30DE
 _LABEL_27F1_8:	
+	add hl, de
+	jr c, _LABEL_27F1_8
+	djnz _LABEL_27EE_9
+	ret
 	
 ; Data from 27F7 to 27FA (4 bytes)	
 _DATA_27F7_:	
@@ -1797,7 +1847,19 @@ _LABEL_2899_51:
 _LABEL_289F_52:	
 	
 _LABEL_28B6_10:	
+	ld a, l
+	out (Port_VDPAddress), a
+	ld a, $C0
+	or h
+	out (Port_VDPAddress), a
 _LABEL_28BE_11:	
+	ex (sp), hl
+	ex (sp), hl
+	ld a, (de)
+	out (Port_VDPData), a
+	inc de
+	djnz _LABEL_28BE_11
+	ret
 	
 	; Data from 28C7 to 28E9 (35 bytes)
 	.db $32 $73 $C1 $CD $5B $28 $EB $7E $D9 $0E $BE $06 $04 $67 $3A $73
@@ -2313,8 +2375,15 @@ _LABEL_344E_156:
 	
 _LABEL_3456_136:	
 _LABEL_3465_6:	
-		ld hl, _DATA_349B_
-	
+	exx
+	ld hl, _DATA_349B_
+	ld bc, $0400 | Port_PSG
+	otir
+	xor a
+	ld (_RAM_DE01_), a
+	exx
+	ret
+
 _LABEL_3474_:	
 	
 	; Data from 3479 to 3487 (15 bytes)
