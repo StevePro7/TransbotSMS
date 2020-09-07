@@ -1827,10 +1827,37 @@ _LABEL_27FB_32:
 _LABEL_2800_46:	
 		ld hl, _DATA_27F7_ + 2
 _LABEL_2803_33:	
-	
+		ld a, (hl)
+		out (Port_VDPAddress), a
+		inc hl
+		ld a, (hl)
+		out (Port_VDPAddress), a
+		ret
+		
 _LABEL_280B_3:	
-_LABEL_281D_4:	
+		ld a, $92
+		out (_PORT_DF_), a
+		ld a, $55
+		out (_PORT_DE_), a
+		in a, (_PORT_DE_)
+		cp $55
+		ld c, $00
+		jr z, _LABEL_281D_4
+		ld c, $FF
+_LABEL_281D_4:
+		ld a, $AA	
+		out (_PORT_DE_), a
+		in a, (_PORT_DE_)
+		cp $AA
+		ld a, $00
+		jr z, _LABEL_282B_5
+		ld a, $FF
 _LABEL_282B_5:	
+		or c
+		ld (_RAM_C002_), a
+		ld a, $07
+		out (_PORT_DE_), a
+		ret
 	
 _LABEL_2834_148:	
 _LABEL_2839_150:	
@@ -1903,7 +1930,7 @@ _LABEL_28FC_26:
 	
 _LABEL_2902_12:	
 		ld ix, _DATA_4957_
-		ld 3, $04
+		ld e, $04
 		jr _LABEL_2920_13
 	
 _LABEL_290A_:	
