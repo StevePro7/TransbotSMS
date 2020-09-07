@@ -797,7 +797,7 @@ _LABEL_FA6_35:
 		jr nz, _LABEL_FC5_37
 		ld a, (_RAM_C145_)
 		out (Port_VDPAddress), a
-		ld a, 88
+		ld a, $88
 		out (Port_VDPAddress), a
 		ld a, $FF
 		out (Port_VDPAddress), a
@@ -1860,32 +1860,62 @@ _LABEL_282B_5:
 		ret
 	
 _LABEL_2834_148:	
-_LABEL_2839_150:	
+		ld d, $00
+		ld l, d
+		ld b, $00
+_LABEL_2839_150:
+		add hl, hl
+		jr nc, _LABEL_283D_149
+		add hl, de
 _LABEL_283D_149:	
-	
+		djnz _LABEL_2839_150
+		ret
 _LABEL_2840_:	
+		ld a, $10
 -:	
-	
+		sla e
+		rl d
+		adc hl, hl
+		jr c, +
+		sbc hl, bc
+		jr nz, ++
+		add hl, bc
+		dec a
+		jr nz, -
+		ret
+		
 +:	
+		or a
+		sbc hl, bc
 ++:	
+		inc e
+		dec a
+		jr nz, -
+		ret
 	
 _LABEL_285B_21:	
-	
+		ld a, l
+		out (Port_VDPAddress), a
+		ld a, $40
+		or h
+		out (Port_VDPAddress), a
+		ret
+		
 _LABEL_2864_20:	
-	call _LABEL_285B_21
-	push de
-	push bc
+		call _LABEL_285B_21
+		push de
+		push bc
 _LABEL_2869_22:	
-	ld a, (de)
-	out (Port_VDPData), a
-	inc de
-	dec bc
-	ld a, c
-	or b
-	jr nz, 	_LABEL_2869_22
-	pop bc
-	pop de
-	ret
+		ld a, (de)
+		out (Port_VDPData), a
+		inc de
+		dec bc
+		ld a, c
+		or b
+		jr nz, 	_LABEL_2869_22
+		pop bc
+		pop de
+		ret
 	
 _LABEL_2875_30:	
 _LABEL_287A_31:	
