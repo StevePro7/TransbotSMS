@@ -537,6 +537,13 @@ _DATA_1B0_:
 	.dw _RAM_C320_
 	
 _LABEL_1E2_103:	
+		ld a, (_RAM_C003_)
+		bit 7, a
+		ret z
+		and $0F
+		cp $05
+		ret z
+
 	
 _LABEL_205_116:	
 _LABEL_207_118:	
