@@ -514,6 +514,10 @@ _LABEL_123_:
 		jp (hl)
 		
 +:	
+		bit 7, (ix+0)
+		jr z, ++
+		call _LABEL_A6C_
+		call _LABEL_9BE_
 ++:	
 	
 ; Pointer Table from 17E to 183 (3 entries, indexed by _RAM_C10E_)	
@@ -709,11 +713,55 @@ _LABEL_97B_:
 +:	
 	
 _LABEL_9BE_:	
+		ld a, (_RAM_C106_)
+		ld e, a
+		ld d, $00
+		add a, (ix+7)
+		cp $40
+		ret nc
+		ld hl, $C240
+		add hl, de
+		push hl
+		ld hl, $C280
+		add hl, de
+		add hl, de
+		ld e, (ix+8)
+		ld d, (ix+9)
+		ld c, (ix+5)
 --:	
+		ld b, (ix+6)
+		ld a, (ix+16)
 -:	
+		ld (hl), a
+		inc hl
+		ex af, af'
+		ld a, (de)
+		ld (hl), a
+		inc hl
+		inc de
+		ex af, af'
+		add a, $08
+		djnz -
+		dec c
+		jr nz, --
+		pop hl
+		ld c, (ix+5)
+		ld a, (ix+13)
 --:	
+		ld b, (ix+6)
 -:	
-	
+		ld (hl), a
+		inc hl
+		djnz -
+		add a, $08
+		dec c
+		jr nz, --
+		ld a, (ix+7)
+		ld hl, _RAM_C106_
+		add a, (hl)
+		ld (hl), a
+		ret
+		
 _LABEL_A0E_:	
 -:	
 +:	
@@ -721,10 +769,46 @@ _LABEL_A0E_:
 _LABEL_A34_:	
 	
 _LABEL_A40_:	
-	
+		res 7, (ix+0)
+		xor a
+		ld (ix+3), a
+		ld (ix+4), a
+		ld (ix+10), a
+		ld (ix+11), a
+		ld (ix+12), a
+		ld (ix+13), $E0
+		ld (ix+15), a
+		ld (ix+16), $F8
+		ld (ix+18), a
+		ld (ix+19), a
+		ld (ix+20), a
+		ld (ix+21), a
+		ret
+		
 _LABEL_A6C_:	
+		ld a, (ix+4)
+		add a, a
+		ld e, a
+		ld d, $00
 		ld hl, _DATA_3B50_
-	
+		add hl, de
+		ld a, (hl)
+		inc hl
+		ld h, (hl)
+		ld l, a
+		ld b, (hl)
+		inc hl
+		ld c, (hl)
+		inc hl
+		ld a, (hl)
+		inc hl
+		ld (ix+5), b
+		ld (ix+6), c
+		ld (ix+7), a
+		ld (ix+8), l
+		ld (ix+9), h
+		ret
+		
 _LABEL_A91_:	
 	
 +:	
