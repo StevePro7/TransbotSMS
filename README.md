@@ -17,3 +17,10 @@ D:\Steven\_NET\VS2017\AsmFileCopy
 
 Update program and run
 Copy TransbotOUT.asm to Transbot.asm back here
+
+
+
+DIARY
+07/09/2020
+loaded 4x sets of graphics tiles and the 2x palettes
+568
