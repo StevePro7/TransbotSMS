@@ -453,6 +453,7 @@ _LABEL_A8_38:
 		ld de, _DATA_3_
 		ld b, $20
 		call _LABEL_28B6_10
+		call _LABEL_2902_12
 		
 _LABEL_123_:	
 		ld hl, _DATA_17E_
@@ -1880,6 +1881,8 @@ _LABEL_28FC_26:
 	
 _LABEL_2902_12:	
 		ld ix, _DATA_4957_
+		ld 3, $04
+		jr _LABEL_2920_13
 	
 _LABEL_290A_:	
 		ld ix, _DATA_5116_
@@ -1891,14 +1894,46 @@ _LABEL_291A_106:
 		ld ix, _DATA_430A_
 _LABEL_291E_24:	
 _LABEL_2920_13:	
+		ld hl, _RAM_D000_
+		ld d, $00
+		ld c, e
 _LABEL_2926_19:	
+	push hl
 _LABEL_2927_17:	
+		ld a, (ix+0)
+		or a
+		jr z, _LABEL_294F_14
+		bit 7, a
+		jr nz, _LABEL_293F_15
+		ld b, a
+		inc ix
+		ld a, (ix+0)
 _LABEL_2937_16:	
+		ld (hl), a
+		add hl, de
+		djnz _LABEL_2937_16
+		inc ix
+		jr _LABEL_2927_17
 	
 _LABEL_293F_15:	
-_LABEL_2942_18:	
+		res 7, a
+		ld b, a
+_LABEL_2942_18:
+		inc ix
+		ld a, (ix+0)
+		ld (hl), a
+		add hl, de
+		djnz _LABEL_2942_18
+		inc ix
+		jr _LABEL_2927_17
 	
 _LABEL_294F_14:	
+		inc ix
+		pop hl
+		inc hl
+		dec c
+		jr nz, _LABEL_2926_19
+		ret
 	
 _LABEL_2957_:	
 	
