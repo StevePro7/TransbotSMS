@@ -369,7 +369,8 @@ _RAM_DEA2_ dsb $9
 	
 ; no$gmb symbolic information for "output.sms".	
 _START:	
-	
+	jp _LABEL_8A_2
+
 ; Data from 3 to 7 (5 bytes)	
 _DATA_3_:	
 	.db $00 $15 $1A $1F $2F
@@ -389,7 +390,8 @@ _DATA_20_:
 	.dsb 21, $FF
 	
 _IRQ_HANDLER:	
-	
+	jp _LABEL_FA6_35
+
 ; Data from 3B to 65 (43 bytes)	
 _DATA_3B_:	
 	.db $76 $80 $A0 $81 $FF $82 $FF $83 $FF $84 $FF $85 $FB $86 $00 $87
@@ -732,14 +734,107 @@ _LABEL_F99_:
 +:	
 	
 _LABEL_FA6_35:	
-_LABEL_FC5_37:	
+	push af
+	in a, (Port_VDPStatus)
+	bit 7, a
+	jr nz, _LABEL_FC8_36
+	ld a, (_RAM_C152_)
+	bit 5, a
+	jr nz, _LABEL_FC5_37
+	ld a, (_RAM_C145_)
+	out (Port_VDPAddress), a
+	ld a, 88
+	out (Port_VDPAddress), a
+	ld a, $FF
+	out (Port_VDPAddress), a
+	ld a, $8A
+	out (Port_VDPAddress), a
+_LABEL_FC5_37:
+	pop af
+	ei
+	ret
 	
-_LABEL_FC8_36:	
+_LABEL_FC8_36:
+	ld a, (_RAM_C14F_)
+	out (Port_VDPAddress), a
+	ld a, $88
+	out (Port_VDPAddress), a
+	ld a, $7F
+	out (Port_VDPAddress), a
+	ld a, $8A
+	out (Port_VDPAddress), a
+	push ix
+	push iy
+	push af
+	push _DATA_3DB0_push de
+	push hl
+	ex af, af'
+	exx
+	push af
+	push bc
+	push de
+	push hl
+	in a, (Port_IOPort2)
+	and $10
+	ld hl, _RAM_C022_
+	ld c, (hl)
+	ld (hl), a
+	xor c
+	and c
+	jp nz, _LABEL_A8_38
+	ld a, (_RAM_C00C_)
+	inc c
+	cp $0F
+	jr c, _LABEL_FFF_39
+	ld a, $0F
 _LABEL_FFF_39:	
+	ld (_RAM_C00C_), a
+	ld a, (_RAM_C00B_)
+	or a
+	jp nz, _LABEL_1051_40
+	ld a, (_RAM_C001_)
+	rlca
+	jr nc, _LABEL_1033_42
+	ld hl, $3F00
+	ld de, _RAM_C240_
+	ld bc, $0040
+	call _LABEL_2864_20
+	ld hl, $3F00
+	ld de, _RAM_C280_
+	ld bc, $0080
+	call _LABEL_2864_20
+	ld hl, _RAM_C181_
+	res 7, (hl)
 _LABEL_1033_42:	
+	call _LABEL_1067_43
+	call _LABEL_29FA_58
+	call _LABEL_2433_74
+	call _LABEL_AEC_96
+	call _LABEL_1E2_103
+	call _LABEL_266F_121
+	call _LABEL_2DFD_123
+	call _LABEL_2E3E_124
+	call _LABEL_934_129
 _LABEL_104E_41:	
+	call _LABEL_303A_134
 _LABEL_1051_40:	
-	
+	ld hl, _RAM_C001_
+	ld (hl), $01
+	pop hl
+	pop de
+	pop bc
+	pop af
+	exx
+	ex af, af'
+	pop hl
+	pop de
+	pop bc
+	pop af
+	pop it
+	pop ix
+	pop af
+	ei
+	ret
 _LABEL_1067_43:	
 _LABEL_108A_56:	
 _LABEL_1090_55:	
