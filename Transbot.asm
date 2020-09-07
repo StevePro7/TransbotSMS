@@ -464,12 +464,55 @@ _LABEL_A8_38:
 		ld bc, $0C00
 		call _LABEL_2864_20
 		call _LABEL_28F6_25
+		ld hl, $0C00
+		ld de, _RAM_D000_
+		ld bc, $0A00
+		call _LABEL_2864_20
+		call _LABEL_28FC_26
+		ld hl, $1600
+		ld de, _RAM_D000_
+		ld bc, $0A00
+		call _LABEL_2864_20
+		call _LABEL_27D3_27
+		call _LABEL_27FB_32
+		ld a, $80
+		ld (_RAM_C003_), a
+		ei
+		jp _LABEL_24F_175
+		
 _LABEL_123_:	
 		ld hl, _DATA_17E_
+		ld a, (_RAM_C181_)
+		and a
+		jr z, +
 		ld hl, _DATA_1B0_
 +:	
+		ld a, (_RAM_C10E_)
+		add a, a
+		ld e, a
+		ld d, $00
+		add hl, de
+		ld a, (hl)
+		inc hl
+		ld h, (hl)
+		ld l, a
+		bit 7, (hl)
+		jr z, ++
+		push hl
+		pop ix
+		ld hl, +	; Overriding return address
+		push hl
 		ld hl, _DATA_2F96_
-	
+		ld e, (ix+2)
+		ld d, $00
+		add hl, de
+		add hl, de
+		ld a, (hl)
+		inc hl
+		ld h, (hl)
+		ld l, a
+		jp (hl)
+		
 +:	
 ++:	
 	
@@ -1823,6 +1866,7 @@ _DATA_27F7_:
 	
 _LABEL_27FB_32:	
 		ld hl, _DATA_27F7_
+		jr _LABEL_2803_33
 	
 _LABEL_2800_46:	
 		ld hl, _DATA_27F7_ + 2
@@ -1948,15 +1992,19 @@ _LABEL_28BE_11:
 	
 _LABEL_28EA_:	
 		ld ix, _DATA_4446_
-	
+		jr _LABEL_291E_24
+		
 _LABEL_28F0_23:	
 		ld ix, _DATA_58F6_
+		jr _LABEL_291E_24
 	
 _LABEL_28F6_25:	
 		ld ix, _DATA_6455_
-	
+		jr _LABEL_291E_24
+		
 _LABEL_28FC_26:	
 		ld ix, _DATA_6E4E_
+		jr _LABEL_291E_24
 	
 _LABEL_2902_12:	
 		ld ix, _DATA_4957_
@@ -1965,9 +2013,13 @@ _LABEL_2902_12:
 	
 _LABEL_290A_:	
 		ld ix, _DATA_5116_
-	
+		ld e, $04
+		jr _LABEL_2920_13
+		
 _LABEL_2912_:	
 		ld ix, _DATA_3F4F_
+		ld e, $04
+		jr _LABEL_2920_13
 	
 _LABEL_291A_106:	
 		ld ix, _DATA_430A_
