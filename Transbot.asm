@@ -1,4 +1,4 @@
-; This disassembly was created using Emulicious (http://www.emulicious.net)	
+; This disassembly was created using Emulicious (http://www.emulicious.net)
 .MEMORYMAP	
 SLOTSIZE $7FF0	
 SLOT 0 $0000	
@@ -766,7 +766,8 @@ _LABEL_FC8_36:
 	push ix
 	push iy
 	push af
-	push _DATA_3DB0_push de
+	push bc
+	push de
 	push hl
 	ex af, af'
 	exx
@@ -830,7 +831,7 @@ _LABEL_1051_40:
 	pop de
 	pop bc
 	pop af
-	pop it
+	pop iy
 	pop ix
 	pop af
 	ei
