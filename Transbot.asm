@@ -1644,10 +1644,35 @@ _LABEL_9BE_:
 		ret
 		
 _LABEL_A0E_:	
+		ld a, (_RAM_C106_)
+		ld hl, _RAM_C107_
+		sub (hl)
+		jr nc, +
+		neg
+		ld b, a
+		ld a, (_RAM_C106_)
+		ld e, a
+		ld d, $00
+		ld hl, $C240
+		add hl, de
 -:	
+		ld (hl), $E0
+		inc hl
+		djnz -
 +:	
+		ld a, (_RAM_C106_)
+		ld (_RAM_C107_), a
+		xor a
+		ld (_RAM_C106_), a
+		ret
 	
-_LABEL_A34_:	
+_LABEL_A34_:
+		push ix
+		push iy
+		pop ix
+		call _LABEL_A40_
+		pop ix
+		ret
 	
 _LABEL_A40_:	
 		res 7, (ix+0)
@@ -1748,58 +1773,320 @@ _DATA_ADA_:
 	.db $0B $0C
 	
 _LABEL_AEC_96:	
+		ld hl, _RAM_C174_
+		bit 7, (hl)
+		ret z
+		bit 6, (hl)
+		jr nz, _LABEL_B25_97
+		inc hl
+		inc hl
+		dec (hl)
+		ret nz
+		ld c, $06
+		ld a, (_RAM_C100_)
+		bit 3, a
+		jr z, _LABEL_B05_98
+		ld c, $0A
 _LABEL_B05_98:	
+		ld (hl), c
+		dec hl
+		dec hl
+		ld c, (hl)
+		inc (hl)
+		ld a, $87
+		cp (hl)
+		jr nz, _LABEL_B11_99
+		ld (hl), $80
 _LABEL_B11_99:	
+		inc hl
+		ld (hl), c
+		ld a, (_RAM_DE00_)
+		cp $83
+		jr z, _LABEL_B7B_100
+		cp $84
+		jr z, _LABEL_B7B_100
+		ld a, $8D
+		ld (_RAM_DE00_), a
+		jr _LABEL_B7B_100
 	
 _LABEL_B25_97:	
+		ld b, (hl)
+		ld a, $1F
+		and b
+		ld (hl), a
+		ld c, a
+		inc hl
+		inc hl
+		ld (hl), $0A
+		ld a, $06
+		cp c
+		jr z, _LABEL_B53_101
+		ld a, (_RAM_C300_)
+		and $F8
+		or c
+		ld (_RAM_C300_), a
+		bit 5, b
+		jr nz, _LABEL_B76_102
+		ld a, (_RAM_DE00_)
+		cp $83
+		jr z, _LABEL_B76_102
+		cp $84
+		jr z, _LABEL_B76_102
+		ld a, $92
+		ld (_RAM_DE00_), a
+		jr _LABEL_B76_102
 	
 _LABEL_B53_101:	
+		ld a, $30
+		ld (_RAM_C5FF_), a
+		ld a, (_RAM_C300_)
+		and $07
+		or $C0
+		ld hl, _RAM_C174_
+		ld e, (hl)
+		ld (hl), a
+		inc hl
+		ld (hl), e
+		ld a, (_RAM_DE00_)
+		cp $83
+		jr z, _LABEL_B76_102
+		cp $84
+		jr z, _LABEL_B76_102
+		ld a, $8C
+		ld (_RAM_DE00_), a
 _LABEL_B76_102:	
+		ld a, $30
+		ld (_RAM_C61F_), a
 _LABEL_B7B_100:	
+		ld a, (_RAM_C175_)
+		and $07
+		add a, a
+		ld e, a
+		ld d, $00
+		ld hl, $3856
+		add hl, de
 		ld de, _DATA_BA9_
+		ld bc, $0002
+		call _LABEL_2864_20
+		ld a, (_RAM_C174_)
+		and $07
+		add a, a
+		ld e, a
+		ld d, $00
 		ld hl, _DATA_BA9_ + 2
+		add hl, de
+		ex de, hl
+		ld bc, $3856
+		add hl, bc
+		ld bc, $0002
+		jp _LABEL_2864_20
 	
 ; Data from BA9 to BB8 (16 bytes)	
 _DATA_BA9_:	
 	.db $00 $11 $01 $11 $02 $11 $03 $11 $04 $11 $05 $11 $06 $11 $07 $11
 	
 _LABEL_BB9_:	
+		xor a
+		ld c, a
+		or (ix+31)
+		ret z
+		ld e, a
+		ld d, $00
+		ld (ix+31), d
+		bit 7, e
+		jr z, +
+		dec d
 +:	
+		ld l, (ix+16)
+		ld h, $00
+		add hl, de
+		ex de, hl
+		xor a
+		ld hl, $00F0
+		sbc hl, de
+		jr nc, +
+		ld de, $00F0
 +:	
+		xor a
+		ld hl, $00C3
+		sbc hl, de
+		jr c, +
+		ld de, $00C4
+		ld c, $01
 +:	
+		ld (ix+16), e
+		ret
 	
 ; 8th entry of Jump Table from 2F96 (indexed by unknown)	
 _LABEL_BED_:	
+		ld a, (_RAM_C100_)
+		bit 2, a
+		ret nz
+		call _LABEL_BB9_
+		dec c
+		ret nz
+		ld iy, _RAM_C300_
+		set 6, (iy+0)
+		ld (iy+2), $04
+		xor a
+		ld (iy+11), a
+		ld (iy+10), a
+		jr +
 	
 ; 9th entry of Jump Table from 2F96 (indexed by unknown)	
 _LABEL_C0D_:	
+		ld a, (_RAM_C100_)
+		bit 1, a
+		ret nz
+		call _LABEL_BB9_
+		dec c
+		ret nz
+		ld a, (_RAM_C300_)
+		and $F8
+		ld (_RAM_C300_), a
 +:	
+		ld hl, _RAM_C174_
+		ld a, (hl)
+		ld (hl), $E0
+		inc hl
+		ld (hl), a
+		ret
 	
 ; 1st entry of Jump Table from 2F96 (indexed by unknown)	
-_LABEL_C29_:	
+_LABEL_C29_:
+		ld hl, _RAM_C10C_
+		ld a, (ix+1)
+		or a
+		jr z, +
+		ld hl, _RAM_C10D_
 +:	
+		ld c, (hl)
+		ld (ix+22), c
+		ld a, (ix+31)
+		dec a
+		jp z, ++
+		dec a
+		jp z, _LABEL_C8C_
+		dec a
+		jr nz, +
+		ld a, $FC
+		and c
+		ld (ix+22), a
 +:	
+		call _LABEL_10B7_
+		bit 6, (ix+0)
+		ret nz
+		call _LABEL_CA3_
 _LABEL_C58_:	
-	
+		call _LABEL_CDC_
+		call _LABEL_AB9_
+		ld a, (ix+22)
+		ld (ix+29), a
+		ret
+		
 ++:	
+		ld a, $D7
+		cp (ix+16)
+		jr c, +
+		ld (ix+22), $08
+		jp _LABEL_C58_
+		
++:	
+		ld a, (ix+5)
+		add a, a
+		add a, a
+		add a, a
+		add a, (ix+13)
+		cp $CF
+		jr nc, +
+		ld (ix+22), $02
+		jp _LABEL_C58_
 	
 +:	
-	
-+:	
-	
+		set 7, (ix+31)
+		ret
+		
 _LABEL_C8C_:	
+		ld a, (ix+6)
+		add a, a
+		add a, a
+		add a, a
+		add a, (ix+16)
+		jr c, +
+		ld (ix+22), $08
+		jp _LABEL_C58_
 	
 +:	
-	
+		set 7, (ix+31)
+		ret
+		
 _LABEL_CA3_:	
+		ld c, (ix+22)
+		ld e, (ix+13)
+		ld d, (ix+16)
+		ld a, $10
+		cp e
+		jr c, +
+		res 0, c
 +:	
+		ld a, (ix+5)
+		add a, a
+		add a, a
+		add a, a
+		sub $B0
+		neg
+		cp e
+		jr nc, +
+		res 1, c
 +:	
+		ld a, $08
+		cp d
+		jr c, +
+		res 2, c
 +:	
+		ld a, (ix+6)
+		add a, a
+		add a, a
+		add a, a
+		sub $E0
+		neg
+		cp d
+		jr nc, +
+		res 3, c
 +:	
+		ld (ix+22), c
+		ret
 	
 _LABEL_CDC_:	
+		ld b, (ix+22)
+		rrc b
+		call c, _LABEL_D27_
+		rrc b
+		call c, _LABEL_D2D_
+		rrc b
+		call c, _LABEL_D33_
+		rrc b
+		call c, _LABEL_D39_
+		rrc b
+		call c, _LABEL_D3F_
+		rrc b
+		ret nc
+		ld a, (ix+29)
+		and $20
+		ret nz
+		exx
+		ld a, $07
+		and (ix+0)
 		ld hl, _DATA_D1B_
+		call _LABEL_1AE6_122
+		ld a, (_RAM_C174_)
+		and $3F
+		jr z, +
+		ld a, $FF
+		ld (_RAM_C61F_), a
 +:	
+		exx
+		ret
 	
 ; Jump Table from D1B to D26 (6 entries, indexed by unknown)	
 _DATA_D1B_:	
