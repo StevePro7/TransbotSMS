@@ -1341,8 +1341,15 @@ _LABEL_817_:
 		ld (_RAM_C16E_), a
 		ret
 	
-_LABEL_835_:	
+_LABEL_835_:
+		ld hl, _RAM_C185_
+		bit 7, (hl)
+		ret z
+		res 7, (hl)
 		ld bc, _DATA_76EF_
+		ld a, (_RAM_C152_)
+		bit 5, a
+		jr z, _LABEL_84A_
 		ld bc, _DATA_780F_
 _LABEL_84A_:	
 		ld d, $00
@@ -1381,13 +1388,102 @@ _LABEL_84A_:
 		ld hl, _RAM_C3E0_
 		ld c, $00
 -:	
+		bit 7, (hl)
+		jr nz, +
+		inc c
+		ld de, $0020
+		add hl, de
+		djnz -
 +:	
+		cp c
+		jr z, +
+		jp nc, ++
 +:	
+		ld b, a
+		ld hl, (_RAM_C183_)
+		ld a, (hl)
+		ld hl, _RAM_C17A_
 -:	
+		ld (hl), a
+		cp $1D
+		jr z, ++
+		cp $1E
+		jr z, ++
+		cp $1F
+		jr z, ++
+		cp $27
+		jr z, ++
+		cp $0B
+		jr z, ++
+		cp $38
+		jr z, ++
+		cp $2A
+		jr z, ++
+		cp $44
+		jr z, ++
+		cp $45
+		jr z, ++
+		cp $46
+		jr z, ++
+		inc hl
+		djnz -
 ++:	
+		ld a, (_RAM_C182_)
+		and $C0
+		cp $80
+		ret nz
+		ld hl, (_RAM_C183_)
+		inc hl
+		ld (_RAM_C183_), hl
 _LABEL_8D6_:	
+		ld a, (_RAM_C182_)
+		rrca
+		rrca
+		rrca
+		and $07
+		ld e, a
+		sub $07
+		neg
+		ret z
+		ld d, $00
+		push de
+		ld a, e
+		add a, a
+		add a, a
+		add a, a
+		add a, a
+		add a, a
+		ld e, a
+		ld iy, $C3C0
+		add iy, de
+		pop de
+		ld hl, $C179
+		add hl, de
+		ld de, (_RAM_C183_)
+		ld a, (_RAM_C182_)
+		and $07
+		ret z
+		ld b, a
 -:	
+		inc hl
+		exx
+		ld de, $0020
+		add iy, de
+		exx
+		bit 7, (iy+0)
+		jr nz, +
+		ld a, (de)
+		cp $00
+		jr z, +
+		cp $12
+		jr z, ++
+		ld (hl), a
 +:	
+		ld a, (_RAM_C182_)
+		and $C0
+		xor $C0
+		jr z, +
+		inc de
 +:	
 		djnz -
 		ret
@@ -1462,13 +1558,14 @@ _LABEL_97B_:
 		or a
 		jr nz, +
 		inc hl
-		inc a
+		inc e
 		ld a, $07
 		sub e
 		jr nz, -
 		pop hl
 		ld (hl), a
 		ret
+
 +:
 		ld (hl), $00
 		ld c, a
@@ -1489,6 +1586,7 @@ _LABEL_97B_:
 		add a, a
 		ld e, a
 		ld hl, $C3E0
+		add hl, de
 		push hl
 		pop iy
 		ld (iy+0), $80
