@@ -948,9 +948,42 @@ _DATA_513_:
 	
 ; 1st entry of Jump Table from 513 (indexed by _RAM_C16F_)	
 _LABEL_51F_:	
+		xor a
+		ld hl, (_RAM_C15F_)
+		ld de, $001A
+		sbc hl, de
+		ret c
+		ld a, (_RAM_C152_)
+		bit 3, a
+		ret z
+		ld iy, _RAM_C4C0_
+		bit 7, (iy+0)
+		ret nz
+		ld (iy+0), $80
+		ld (iy+2), $0E
+		ld hl, $0000
+		ld (_RAM_C15F_), hl
+		ret
 	
 ; 2nd entry of Jump Table from 513 (indexed by _RAM_C16F_)	
 _LABEL_547_:	
+		ld a, (_RAM_C170_)
+		dec a
+		jr z, +
+		ld a, $01
+		ld (_RAM_C170_), a
+		ld a, $80
+		ld (_RAM_C5E0_), a
+		ld (_RAM_C600_), a
+		ld a, $30
+		ld (_RAM_C5FF_), a
+		ld (_RAM_C61F_), a
+		ld hl, _RAM_C152_
+		set 3, (hl)
+		call _LABEL_94A_
+		call _LABEL_692_
+		ld hl, _RAM_C000_
+		set 2, (hl)
 +:	
 		ld hl, _DATA_5B9_
 	
@@ -1083,16 +1116,59 @@ _LABEL_8D6_:
 -:	
 +:	
 +:	
+		djnz -
+		ret
 	
 ++:	
-	
+		ld hl, _RAM_C177_
+		res 7, (hl)
+		ld a, $05
+		ld (_RAM_C16F_), a
+		ret
+
 _LABEL_934_129:	
+		ld a, (_RAM_C177_)
+		rlca
+		ret nc
+		ld hl, (_RAM_C186_)
+		dec hl
+		ld (_RAM_C186_), hl
+		ld a, l
+		or h
+		jr nz, _LABEL_96E_130
+		ld hl, $01C2
+		ld (_RAM_C186_), hl
 _LABEL_94A_:	
+		ld hl, _RAM_C15A_
+		inc (hl)
+		ld a, (hl)
+		cp $10
+		jr c, _LABEL_96E_130
+		ld (hl), $00
+		ld a, (_RAM_C159_)
+		inc a
+		ld hl, _RAM_C152_
+		bit 5, (hl)
+		jr nz, _LABEL_966_131
+		cp $09
+		jr c, _LABEL_96B_132
+		jr _LABEL_96A_133
 	
 _LABEL_966_131:	
+		cp $03
+		jr c, _LABEL_96B_132
 _LABEL_96A_133:	
+		xor a
 _LABEL_96B_132:	
+		ld (_RAM_C159_), a
 _LABEL_96E_130:	
+		ld hl, _RAM_C188_
+		dec (hl)
+		ret nz
+		ld (hl), $48
+		ld hl, _RAM_C185_
+		set 7, (hl)
+		ret
 	
 _LABEL_97B_:	
 		ld hl, _RAM_C177_
