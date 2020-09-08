@@ -734,6 +734,17 @@ _LABEL_31D_:
 	
 ; 3rd entry of Jump Table from 268 (indexed by _RAM_C003_)	
 _LABEL_347_:	
+		ld hl, _RAM_C003_
+		bit 6, (hl)
+		jr nz, +
+		set 6, (hl)
+		di
+		ld hl, _RAM_C100_
+		ld de, _RAM_C100_ + 1
+		ld bc, $1E01
+		ld (hl), $00
+		ldir
+		call _LABEL_429_
 		ld hl, _DATA_85_
 +:	
 		ld bc, _DATA_786F_
@@ -749,9 +760,31 @@ _LABEL_3EE_:
 	
 +:	
 	
-_LABEL_429_:	
+_LABEL_429_:
+		call _LABEL_2800_46
+		ld hl, $0000
 		ld de, _DATA_3_
+		ld b, $20
+		call _LABEL_28B6_10
+		call _LABEL_290A_
+		ld hl, $2C00
+		ld de, _RAM_D000_
+		ld bc, $1240
+		call _LABEL_2864_20
+		call _LABEL_27D3_27
 		ld hl, _DATA_2B4D_
+		ld (_RAM_C153_), hl
+		ld (_RAM_C221_), hl
+		ld a, $FF
+		ld (_RAM_C15A_), a
+		ld (_RAM_C15C_), a
+		ld (_RAM_C228_), a
+		ld (_RAM_C22A_), a
+		ld c, $03
+		ld a, (_RAM_C100_)
+		bit 0, a
+		jr z, +
+		ld c, $0A
 +:	
 -:	
 	
