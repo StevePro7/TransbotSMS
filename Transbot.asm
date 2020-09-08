@@ -566,14 +566,62 @@ _LABEL_1E2_103:
 		call _LABEL_264B_104
 		call _LABEL_255E_105
 		call _LABEL_2453_85
+		and $30
+		jr nz, _LABEL_205_116
+		call _LABEL_24BF_77
+		and $30
+		jr z, _LABEL_234_117
+		ld c, $50
+		jr _LABEL_207_118
+
 _LABEL_205_116:	
+		ld c, $D0
 _LABEL_207_118:	
+		ex af, af'
+		ld hl, _RAM_C003_
+		ld a, $0F
+		and (hl)
+		cp $01
+		jr nz, _LABEL_223_119
+		ld hl, $C006
+		ex af, af'
+		cp (hl)
+		jr z, _LABEL_242_120
+		ld a, c
+		ld (_RAM_C000_), a
+		ld a, $04
+		ld (_RAM_C003_), a
+		ret
 	
 _LABEL_223_119:	
+		ld a, $81
+		ld (_RAM_C003_), a
+		ex af, af'
+		ld (_RAM_C006_), a
+		xor a
+		ld (_RAM_C009_), a
+		ld (_RAM_C008_), a
+		ret
 	
 _LABEL_234_117:	
+		ex af, af'
+		ld a, (_RAM_C003_)
+		and $0F
+		cp $01
+		ret nz
+		ex af, af'
+		ld (_RAM_C006_), a
+		ret
 	
 _LABEL_242_120:	
+		ld hl, (_RAM_C004_)
+		dec hl
+		ld a, l
+		or h
+		ret nz
+		ld a, $03
+		ld (_RAM_C003_), a
+		ret
 	
 _LABEL_24F_175:	
 		call _LABEL_27A8_176
@@ -609,15 +657,52 @@ _LABEL_274_:
 +:	
 		xor a
 		ld (_RAM_C009_), a
-		ld a, $01
+		ld a, $81
 		ld (_RAM_C003_), a
 		ret
 	
 ; 2nd entry of Jump Table from 268 (indexed by _RAM_C003_)	
 _LABEL_2B9_:	
+		ld hl, _RAM_C003_
+		bit 6, (hl)
+		jr nz, +
+		set 6, (hl)
+		inc hl
+		ld bc, $0250
+		ld (hl), c
+		inc hl
+		ld (hl), b
+		ld a, $80
+		ld (_RAM_C008_), a
+		di
+		call _LABEL_2800_46
+		ld hl, $0000
 		ld de, _DATA_30C_
+		ld b, $11
+		call _LABEL_28B6_10
+		call _LABEL_2912_
+		ld de, _RAM_D000_
+		ld hl, $2C00
+		ld bc, $0680
+		call _LABEL_2864_20
+		call _LABEL_4EA_
+		call _LABEL_27FB_32
+		ei
+		ld a, $81
+		ld (_RAM_DE00_), a
+		ret
 	
 +:	
+		ld hl, (_RAM_C004_)
+		dec hl
+		ld (_RAM_C004_), hl
+		ld a, l
+		or h
+		ret nz
+		ld (_RAM_C008_), a
+		ld a, $82
+		ld (_RAM_C003_), a
+		ret
 	
 ; Data from 30C to 31C (17 bytes)	
 _DATA_30C_:	
@@ -625,9 +710,27 @@ _DATA_30C_:
 	.db $30
 	
 ; 4th entry of Jump Table from 268 (indexed by _RAM_C003_)	
-_LABEL_31D_:	
+_LABEL_31D_:
+		ld hl, _RAM_C003_
+		bit 6, (hl)
+		jr nz, +
+		set 6, (hl)
+		inc hl
+		ld (hl), $0A
+		di
+		call _LABEL_2800_46
+		call _LABEL_4EA_
 		ld hl, _DATA_2F23_
+		call _LABEL_2549_107
+		call _LABEL_2F01_
+		call _LABEL_27FB_32
+		ei
 +:	
+		ld hl, _RAM_C004_
+		dec (hl)
+		ret nz
+		ld (hl), $10
+		jp _LABEL_2EAC_
 	
 ; 3rd entry of Jump Table from 268 (indexed by _RAM_C003_)	
 _LABEL_347_:	
@@ -653,7 +756,19 @@ _LABEL_429_:
 -:	
 	
 _LABEL_4EA_:	
+		ld hl, _RAM_C100_
+		ld de , _RAM_C100_ + 1
+		ld bc, $1E01
+		ld (hl), $00
+		ldir
+		ld hl, _RAM_C000_
+		ld (hl), $00
+		ld a, (Port_VDPStatus)
+		ld b, $14
+		ld b, Port_VDPAddress
 		ld hl, _DATA_3B_
+		otir
+		jp _LABEL_27D3_27
 	
 _LABEL_50A_:	
 		ld hl, _DATA_513_
@@ -1922,6 +2037,13 @@ _LABEL_24BA_92:
 		ret
 		
 _LABEL_24BF_77:	
+		ld a, (_RAM_C002_)
+		and a
+		jr z, _LABEL_24CB_78
+		in am, (Port_IOPort1)
+		cpl
+		and $3F
+		ret
 	
 _LABEL_24CB_78:	
 _LABEL_24DE_79:	
@@ -1939,8 +2061,26 @@ _LABEL_2535_94:
 _LABEL_2543_93:	
 	
 _LABEL_2549_107:	
+		ld b, (hl)
+		inc hl
 _LABEL_254B_108:	
-	
+		push bc
+		ld e, (hl)
+		inc hl
+		ld d, (hl)
+		inc hl
+		ld c, (hl)
+		inc hl
+		ld b, (hl)
+		inc hl
+		ex de, hl
+		call _LABEL_2864_20
+		ex de, hl
+		add hl, bc
+		pop bc
+		djnz _LABEL_254B_108
+		ret
+		
 _LABEL_255E_105:	
 		ld a, (_RAM_C008_)
 		bit 7, a
@@ -2076,8 +2216,14 @@ _DATA_27D0_:
 	.db $00 $11 $E0
 	
 _LABEL_27D3_27:	
+		ld hl, $3800
 		ld de, _DATA_27D0_
+		ld bc, $0380
+		call _LABEL_2885_28
+		ld hl, $3F00
 		ld de, _DATA_27D0_ + 2
+		ld bc, $0040
+		jp _LABEL_2875_30
 	
 _LABEL_27EB_7:
 	ld de, $FFFF	
@@ -2194,6 +2340,9 @@ _LABEL_2875_30:
 _LABEL_287A_31:	
 	
 _LABEL_2885_28:	
+		call _LABEL_285B_21
+		ex (sp), hl
+		ex (sp), hl
 _LABEL_288A_29:	
 	
 _LABEL_2899_51:	
@@ -2540,22 +2689,80 @@ _DATA_2E98_:
 	.db $00 $01 $00 $20
 	
 _LABEL_2EAC_:	
+		call _LABEL_2453_85
+		and $30
+		jp nz, _LABEL_2EFB_
+		call _LABEL_24BF_77
+		ld c, a
+		and $30
+		cp $30
+		ret z
+		ld hl, _RAM_C012_
+		rrc c
+		jr c, +++
+		rrc c
+		jr c, ++
+		rrc c
+		jr c, +
+		rrc c
+		ret nc
+		res 3, (hl)
+		bit 4, a
+		jr nz, ++++
+		set 3, (hl)
+		jr ++++
 	
 +:	
+		res 2, (hl)
+		bit 4, a
+		jr nz, ++++
+		set 2, (hl)
+		jr ++++
 	
 ++:	
+		res 1, (hl)
+		bit 4, a
+		jr nz, ++++
+		set 1, (hl)
+		jr ++++
 	
 +++:	
+		res 0, (hl)
+		bit 4, a
+		jr nz, ++++
+		set 0, (hl)
 ++++:	
+		di 
+		call _LABEL_2F01_
+		ei
+		ret
 	
 _LABEL_2EFB_:	
+		ld a, $80
+		ld (_RAM_C003_), a
+		ret
 	
 _LABEL_2F01_:	
+		ld a, (_RAM_C012_)
+		ld hl, $39E0
+		ld b, $04
 -:	
 		ld de, _DATA_2F8A_
+		rrca
+		jr nc, +
 		ld de, _DATA_2F90_
 +:	
-	
+		push af
+		push bc
+		ld bc, $0006
+		call _LABEL_2864_20
+		ld de, $0080
+		add hl, de
+		pop bc
+		pop af
+		djnz -
+		ret
+
 ; Data from 2F23 to 2F89 (103 bytes)	
 _DATA_2F23_:	
 	.db $06 $52 $39 $1C $00 $13 $11 $05 $11 $03 $11 $12 $11 $05 $11 $14
