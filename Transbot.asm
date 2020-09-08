@@ -773,15 +773,76 @@ _LABEL_347_:
 		jp _LABEL_97B_
 		
 +:	
+		di
+		call _LABEL_4EA_
+		ei
+		ld a, $80
+		ld (_RAM_C003_), a
+		ld a, $00
+		ld (_RAM_DE00_), a
+		ret
 	
 ; 5th entry of Jump Table from 268 (indexed by _RAM_C003_)	
 _LABEL_3B2_:	
+		ld hl, _RAM_C003_
+		bit 6, (hl)
+		jp nz, +
+		set 6, (hl)
+		di 
+		ld hl, _RAM_C100_
+		ld de, _RAM_C100_ + 1
+		ld bc, $1E01
+		ld (hl), $00
+		ldir
+		ld a, (_RAM_C012_)
+		ld (_RAM_C100_), a
+		call _LABEL_429_
+		call _LABEL_6A9_
+		ld a, $01
+		ld (_RAM_C16E_), a
+		ei
 +:	
-	
+		call _LABEL_123_
+		call _LABEL_50A_
+		call _LABEL_2957_
+		call _LABEL_817_
+		call _LABEL_835_
+		jp _LABEL_97B_
+		
 ; 6th entry of Jump Table from 268 (indexed by _RAM_C003_)	
 _LABEL_3EE_:	
-	
+		ld hl, _RAM_C003_
+		bit 6, (hl)
+		jr nz, +
+		set 6, (hl)
+		inc hl
+		ld bc, $00EB
+		ld (hl), c
+		inc hl
+		ld (hl), b
+		di
+		call _LABEL_2800_46
+		call _LABEL_4EA_
+		ld a, $C3
+		ld (_RAM_C168_), a
+		ld a, $82
+		ld (_RAM_DE00_), a
+		call _LABEL_27FB_32
+		ei
+		ret
+		
 +:	
+		ld hl, (_RAM_C004_)
+		dec hl
+		ld (_RAM_C004_), hl
+		ld a, l
+		or h
+		ret nz
+		ld a, $80
+		ld (_RAM_C003_), a
+		ld a, $00
+		ld (_RAM_DE00_), a
+		ret
 	
 _LABEL_429_:
 		call _LABEL_2800_46
@@ -809,7 +870,57 @@ _LABEL_429_:
 		jr z, +
 		ld c, $0A
 +:	
+		ld a, c
+		ld (_RAM_C15D_), a
+		ld (_RAM_C22B_), a
+		ld a, $40
+		ld (_RAM_C167_), a
+		ld (_RAM_C235_), a
+		ld a, $01
+		ld (_RAM_C13E_), a
+		ld (_RAM_C13F_), a
+		ld a, $80
+		ld (_RAM_C168_), a
+		ld hl, _RAM_C10E_
+		ld (hl), $00
+		inc hl
+		ld (hl), $19
+		ld hl, _RAM_C240_
+		ld de, _RAM_C240_ + 1
+		ld bc, $003F
+		ld (hl), $E0
+		ldir
+		ld de, $0020
+		ld ix, _RAM_C300_
+		ld b, $19
+		ld c, $00
 -:	
+		ld (ix+1), c
+		ld (ix+16), $F8
+		inc c
+		add ix, de
+		djnz -
+		ld a, $80
+		ld (_RAM_C5E0_), a
+		ld (_RAM_C600_), a
+		ld a, $F0
+		ld (_RAM_C5F0_), a
+		ld (_RAM_C610_), a
+		ld a, $FF
+		ld (_RAM_C5ED_), a
+		ld a, $07
+		ld (_RAM_C60D_), a
+		ld a, $07
+		ld (_RAM_C5E2_), a
+		ld a, $08
+		ld (_RAM_C602_), a
+		ld a, $4A
+		ld (_RAM_C5E4_), a
+		ld (_RAM_C604_), a
+		ld a, $0A
+		ld (_RAM_C176_), a
+		call _LABEL_28EA_
+		jp _LABEL_27FB_32
 	
 _LABEL_4EA_:	
 		ld hl, _RAM_C100_
@@ -819,9 +930,9 @@ _LABEL_4EA_:
 		ldir
 		ld hl, _RAM_C000_
 		ld (hl), $00
-		ld a, (Port_VDPStatus)
+		in a, (Port_VDPStatus)
 		ld b, $14
-		ld b, Port_VDPAddress
+		ld c, Port_VDPAddress
 		ld hl, _DATA_3B_
 		otir
 		jp _LABEL_27D3_27
@@ -866,6 +977,21 @@ _LABEL_64F_:
 _LABEL_692_:	
 	
 _LABEL_6A9_:	
+		ld a, $C0
+		ld (_RAM_C4C0_), a
+		ld a, $50
+		ld (_RAM_C4C2_), a
+		ld a, $80
+		ld (_RAM_C300_), a
+		ld a, $00
+		ld (_RAM_C302_), a
+		ld a, $03
+		ld (_RAM_C31F_), a
+		ld a, $95
+		ld (_RAM_DE00_), a
+		ld hl, $0120
+		ld (_RAM_C171_), hl
+		ret
 	
 ; 5th entry of Jump Table from 513 (indexed by _RAM_C16F_)	
 _LABEL_6CE_:	
@@ -969,10 +1095,56 @@ _LABEL_96B_132:
 _LABEL_96E_130:	
 	
 _LABEL_97B_:	
+		ld hl, _RAM_C177_
+		bit 7, (hl)
+		ret z
+		inc hl
+		dec (hl)
+		ret nz
+		ld (hl), $08
+		inc hl
+		push hl
+		ld e, (hl)
+		ld d, $00
+		inc hl
+		add hl, de
 -:	
-	
+		ld a, (hl)
+		or a
+		jr nz, +
+		inc hl
+		inc a
+		ld a, $07
+		sub e
+		jr nz, -
+		pop hl
+		ld (hl), a
+		ret
++:
+		ld (hl), $00
+		ld c, a
+		ld b, e
+		inc e
+		ld a, $07
+		sub e
+		jr nz, +
+		ld e, a	
 +:	
-+:	
+		pop hl
+		ld (hl), e
+		ld a, b
+		add a, a
+		add a, a
+		add a, a
+		add a, a
+		add a, a
+		ld e, a
+		ld hl, $C3E0
+		push hl
+		pop iy
+		ld (iy+0), $80
+		ld (iy+2), c
+		ret
 	
 _LABEL_9BE_:	
 		ld a, (_RAM_C106_)
