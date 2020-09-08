@@ -1884,7 +1884,7 @@ _LABEL_1DA2_:
 	
 	; Data from 1DBE to 1DBF (2 bytes)
 	.db $01 $38
-	
+
 ; 18th entry of Jump Table from 2F96 (indexed by unknown)	
 _LABEL_1DC0_:	
 		ld hl, _DATA_1DC6_
@@ -1893,7 +1893,7 @@ _LABEL_1DC0_:
 _DATA_1DC6_:	
 	.dw _LABEL_1DCC_ _LABEL_1DDF_ _LABEL_1E04_
 	
-; 1st entry of Jump Table from 1DC6 (indexed by unknown)	
+; 1st entry of Jump Table from 1DC6 (indexed by unknown)
 _LABEL_1DCC_:	
 	
 ; 2nd entry of Jump Table from 1DC6 (indexed by unknown)	
@@ -2230,7 +2230,7 @@ _LABEL_24BF_77:
 		ld a, (_RAM_C002_)
 		and a
 		jr z, _LABEL_24CB_78
-		in am, (Port_IOPort1)
+		in a, (Port_IOPort1)
 		cpl
 		and $3F
 		ret
