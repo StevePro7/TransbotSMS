@@ -985,24 +985,127 @@ _LABEL_547_:
 		ld hl, _RAM_C000_
 		set 2, (hl)
 +:	
+		ld hl, (_RAM_C171_)
+		dec hl
+		ld (_RAM_C171_), hl
+		ld a, l
+		or h
+		ret nz
+		xor a
+		ld (_RAM_C16F_), a
+		ld (_RAM_C170_), a
+		ld (_RAM_C18B_), a
+		ld (_RAM_C31F_), a
+		ld ix, _RAM_C4C0_
+		call _LABEL_A40_
 		ld hl, _DATA_5B9_
+		ld de, _RAM_C177_
+		ld bc, $0003
+		ldir
+		ld hl, $012C
+		ld (_RAM_C186_), hl
+		ld a, $48
+		ld (_RAM_C188_), a
+		ld a, (_RAM_C152_)
+		bit 5, a
+		jr nz, +
+		ld a, $83
+		ld (_RAM_DE00_), a
+		ret
 	
 +:	
+		ld a, $84
+		ld (_RAM_DE00_), a
+		ret
 	
 ; Data from 5B9 to 5BB (3 bytes)	
 _DATA_5B9_:	
 	.db $80 $01 $00
 	
 ; 3rd entry of Jump Table from 513 (indexed by _RAM_C16F_)	
-_LABEL_5BC_:	
+_LABEL_5BC_:
+		ld hl, _RAM_C170_
+		ld a, (hl)
+		dec a
+		jr z, +
+		dec a
+		jr z, ++
+		ld (hl), $01
+		ld hl, 	_RAM_C177_
+		res 7, (hl)
+		ld hl, _RAM_C152_
+		res 3, (hl)
 +:	
+		ld hl, _RAM_C3E0_
+		ld b, $10
+		call _LABEL_F99_
+		ret nz
+		ld a, $02
+		ld (_RAM_C170_), a
+		ld a, $01
+		ld (_RAM_C31F_), a
 ++:	
+		ld a, (_RAM_C31F_)
+		bit 7, a
+		ret z
+		ld a, $02
+		ld (_RAM_C16E_), a
+		jp +++
 	
 ; 4th entry of Jump Table from 513 (indexed by _RAM_C16F_)	
 _LABEL_5F3_:	
+		ld hl, _RAM_C170_
+		ld a, (hl)
+		dec a
+		jr z, +
+		dec a
+		jr z, ++
+		ld (hl), $01
+		ld hl, _RAM_C177_
+		res 7, (hl)
+		ld hl, _RAM_C152_
+		res 3, (hl)
 +:	
+		ld hl, _RAM_C3E0_
+		ld b, $10
+		call _LABEL_F99_
+		ret nz
+		ld a, $02
+		ld (_RAM_C170_), a
+		ld a, $02
+		ld (_RAM_C31F_), a
 ++:	
+		ld a, (_RAM_C31F_)
+		bit 7, a
+		ret z
+		ld a, $01
+		ld (_RAM_C16E_), a
 +++:	
+		ld hl, _RAM_C159_
+		ld c, (hl)
+		inc hl
+		ld b, (hl)
+		inc hl
+		ld de, _RAM_C159_
+		ld a, (hl)
+		ld (de), a
+		inc hl
+		inc de
+		ld a, (hl)
+		ld (de), a
+		inc de
+		ex de, hl
+		ld (hl), c
+		inc hl
+		ld (hl), b
+		xor a
+		ld (_RAM_C170_), a
+		ld (_RAM_C16F_), a
+		ld hl, $0001
+		ld (_RAM_C171_), hl
+		ld a, $00
+		ld (_RAM_DE00_), a
+		ret
 	
 ; 6th entry of Jump Table from 513 (indexed by _RAM_C16F_)	
 _LABEL_64F_:	
@@ -1471,8 +1574,16 @@ _LABEL_F87_:
 -:	
 	
 _LABEL_F99_:	
+		push hl
 -:	
+		bit 7, (hl)
+		jr nz, +
+		ld de, $0020
+		add hl, de
+		djnz -
 +:	
+		pop hl
+		ret
 	
 _LABEL_FA6_35:	
 		push af
