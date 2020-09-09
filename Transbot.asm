@@ -2093,15 +2093,32 @@ _DATA_D1B_:
 	.dw _LABEL_D51_ _LABEL_D91_ _LABEL_DD1_ _LABEL_E0E_ _LABEL_E4B_ _LABEL_F0F_
 	
 _LABEL_D27_:	
+		ld de, $0100
+		jp _LABEL_1403_
 	
 _LABEL_D2D_:	
+		ld de, $0100
+		jp _LABEL_13EB_
 	
 _LABEL_D33_:	
+		ld de, $0200
+		jp _LABEL_13C5_
 	
 _LABEL_D39_:	
+		ld de, $0200
+		jp _LABEL_13AA_
 	
 _LABEL_D3F_:	
+		ld a, (ix+29)
+		and $10
+		ret nz
+		exx
+		ld hl, _RAM_C174_
+		bit 7, (hl)
+		jr z, +
+		set 6m, (hl)
 +:	
+		
 	
 ; 1st entry of Jump Table from D1B (indexed by unknown)	
 _LABEL_D51_:	
