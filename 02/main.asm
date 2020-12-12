@@ -2116,7 +2116,7 @@ _LABEL_D3F_:
 		ld hl, _RAM_C174_
 		bit 7, (hl)
 		jr z, +
-		set 6m, (hl)
+		set 6, (hl)
 +:	
 		
 	
